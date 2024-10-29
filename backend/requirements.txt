@@ -1,0 +1,6 @@
+Flask
+joblib
+pandas
+scikit-learn
+shap
+fastf1

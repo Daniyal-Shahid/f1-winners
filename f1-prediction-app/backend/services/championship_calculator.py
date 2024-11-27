@@ -63,7 +63,9 @@ class ChampionshipCalculator:
 
             if remaining_races > 0:
                 leader_points = driver_standings[0]['points']
+                second_place_points = driver_standings[1]['points'] if len(driver_standings) > 1 else 0
                 constructor_leader_points = constructor_standings[0]['points']
+                constructor_second_points = constructor_standings[1]['points'] if len(constructor_standings) > 1 else 0
 
                 # Calculate driver contenders
                 for driver in driver_standings:
@@ -87,15 +89,30 @@ class ChampionshipCalculator:
                             'points_needed': points_behind if points_behind > 0 else 0
                         })
 
-            if remaining_races == 0:
-                return {
-                    'status': 'completed',
-                    'driver_champion': driver_standings[0]['driver'],
-                    'constructor_champion': constructor_standings[0]['team'],
-                    'driver_standings': driver_standings[:3],
-                    'constructor_standings': constructor_standings[:3]
-                }
-            else:
+                # Get current season
+                season = schedule_data['MRData']['RaceTable']['season']
+
+                # Calculate if championships are mathematically decided
+                driver_champion = None
+                constructor_champion = None
+                
+                # Check if driver championship is decided
+                if (leader_points - second_place_points) > max_remaining_points:
+                    driver_champion = {
+                        'name': driver_standings[0]['driver'],
+                        'team': driver_standings[0]['team'],
+                        'points': driver_standings[0]['points'],
+                        'season': season
+                    }
+
+                # Check if constructor championship is decided
+                if (constructor_leader_points - constructor_second_points) > (max_remaining_points * 2):
+                    constructor_champion = {
+                        'name': constructor_standings[0]['team'],
+                        'points': constructor_standings[0]['points'],
+                        'season': season
+                    }
+
                 return {
                     'status': 'in_progress',
                     'remaining_races': remaining_races,
@@ -104,7 +121,26 @@ class ChampionshipCalculator:
                     'championship_contenders': {
                         'drivers': driver_contenders,
                         'constructors': constructor_contenders
-                    }
+                    },
+                    'driver_champion': driver_champion,
+                    'constructor_champion': constructor_champion
+                }
+            else:
+                return {
+                    'status': 'completed',
+                    'driver_champion': {
+                        'name': driver_standings[0]['driver'],
+                        'team': driver_standings[0]['team'],
+                        'points': driver_standings[0]['points'],
+                        'season': season
+                    },
+                    'constructor_champion': {
+                        'name': constructor_standings[0]['team'],
+                        'points': constructor_standings[0]['points'],
+                        'season': season
+                    },
+                    'driver_standings': driver_standings[:3],
+                    'constructor_standings': constructor_standings[:3]
                 }
         except Exception as e:
             logging.error(f"Error calculating championship status: {e}")

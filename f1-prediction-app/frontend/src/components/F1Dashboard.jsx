@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Trophy, Timer, Flag, AlertCircle, Calendar, Dot } from 'lucide-react';
+import { Trophy, Timer, Flag, AlertCircle, Calendar, Dot, InfoIcon } from 'lucide-react';
 import axios from 'axios';
 import { getNextRace, getLastRace } from '../utils/raceCalendar';
 import ChampionshipStatus from './ChampionshipStatus';
+import LoadingBar from './LoadingBar';
 
 const F1Dashboard = () => {
   const [prediction, setPrediction] = useState(null);
@@ -73,8 +74,17 @@ const F1Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <h2 className="text-xl font-semibold text-gray-700 mb-4 text-center">
+            Loading F1 Data
+          </h2>
+          <LoadingBar />
+          <br></br>
+          <p className="text-gray-500 text-center mt-4">
+            Fetching latest race information and predictions...
+          </p>
+        </div>
       </div>
     );
   }
@@ -127,17 +137,38 @@ const F1Dashboard = () => {
                   </h2>
                 </div>
                 <div className="p-6 space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-2xl font-bold text-gray-900">{prediction.qualifying.driver}</h3>
-                      <p className="text-purple-600 font-medium">{prediction.qualifying.team}</p>
+                  {/* Top 3 Predictions */}
+                  <div className="space-y-4">
+                    {/* Primary Prediction (Highest Confidence) */}
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-2xl font-bold text-gray-900">P1: {prediction.qualifying.driver}</h3>
+                        <p className="text-purple-600 font-medium">{prediction.qualifying.team}</p>
+                      </div>
+                      <div className="bg-purple-50 px-4 py-2 rounded-full">
+                        <span className="text-purple-700 font-semibold">
+                          {prediction.qualifying.confidence}% Confidence
+                        </span>
+                      </div>
                     </div>
-                    <div className="bg-purple-50 px-4 py-2 rounded-full">
-                      <span className="text-purple-700 font-semibold">
-                        {prediction.qualifying.confidence}% Confidence
-                      </span>
-                    </div>
+
+                    {/* Secondary Predictions */}
+                    {prediction.qualifying.other_predictions?.slice(0, 2).map((pred, index) => (
+                      <div key={index} className="flex items-center justify-between border-t pt-3">
+                        <div>
+                          <h4 className="text-lg font-medium text-gray-800">P{index +2}: {pred.driver}</h4>
+                          <p className="text-purple-500 text-sm">{pred.team}</p>
+                        </div>
+                        <div className="bg-purple-50/50 px-3 py-1 rounded-full">
+                          <span className="text-purple-600 text-sm">
+                            {pred.confidence}% Confidence
+                          </span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
+
+                  {/* Reasons Section */}
                   {prediction.qualifying.reasons && prediction.qualifying.reasons.length > 0 && (
                     <div>
                       <h4 className="font-semibold mb-2">Why we predict this pole position:</h4>
@@ -165,17 +196,40 @@ const F1Dashboard = () => {
                   </h2>
                 </div>
                 <div className="p-6 space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-2xl font-bold text-gray-900">{prediction.race.driver}</h3>
-                      <p className="text-yellow-600 font-medium">{prediction.race.team}</p>
+                  {/* Top 3 Predictions */}
+                  <div className="space-y-4">
+                    {/* Primary Prediction (Highest Confidence) */}
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-2xl font-bold text-gray-900">P1: {prediction.race.driver}</h3>
+                        <p className="text-yellow-600 font-medium">{prediction.race.team}</p>
+                      </div>
+                      <div className="bg-yellow-50 px-4 py-2 rounded-full">
+                        <span className="text-yellow-700 font-semibold">
+                          {Math.round(prediction.race.confidence * 
+                            (prediction.race.prediction_metadata?.confidence_adjustment || 1))}% Confidence
+                        </span>
+                      </div>
                     </div>
-                    <div className="bg-yellow-50 px-4 py-2 rounded-full">
-                      <span className="text-yellow-700 font-semibold">
-                        {prediction.race.confidence}% Confidence
-                      </span>
-                    </div>
+
+                    {/* Secondary Predictions */}
+                    {prediction.race.other_predictions?.slice(0, 2).map((pred, index) => (
+                      <div key={index} className="flex items-center justify-between border-t pt-3">
+                        <div>
+                          <h4 className="text-lg font-medium text-gray-800">P{index +2}: {pred.driver}</h4>
+                          <p className="text-yellow-500 text-sm">{pred.team}</p>
+                        </div>
+                        <div className="bg-yellow-50/50 px-3 py-1 rounded-full">
+                          <span className="text-yellow-600 text-sm">
+                            {Math.round(pred.confidence * 
+                              (prediction.race.prediction_metadata?.confidence_adjustment || 1))}% Confidence
+                          </span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
+
+                  {/* Reasons Section */}
                   {prediction.race.reasons && prediction.race.reasons.length > 0 && (
                     <div>
                       <h4 className="font-semibold mb-2">Why we predict this win:</h4>
@@ -189,6 +243,24 @@ const F1Dashboard = () => {
                       </ul>
                     </div>
                   )}
+                </div>
+              </div>
+            )}
+
+            {/* Add warning banner if using previous season data */}
+            {(prediction.race?.prediction_metadata?.using_previous_season || 
+              prediction.qualifying?.prediction_metadata?.using_previous_season) && (
+              <div className="lg:col-span-2 bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <InfoIcon className="h-5 w-5 text-blue-400" />
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm text-blue-700">
+                      These predictions are based on {prediction.race?.prediction_metadata?.season_used} season data. 
+                      Predictions will be updated once current season data becomes available.
+                    </p>
+                  </div>
                 </div>
               </div>
             )}

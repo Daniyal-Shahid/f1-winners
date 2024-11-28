@@ -4,6 +4,7 @@ import numpy as np
 import logging
 from datetime import datetime, timedelta
 from .championship_calculator import ChampionshipCalculator
+from .sentiment_analyzer import F1SentimentAnalyzer
 
 class F1Predictor:
     
@@ -13,6 +14,7 @@ class F1Predictor:
         self.last_race_cache = None
         self.cache_timestamp = None
         self.cache_duration = timedelta(hours=1)
+        self.sentiment_analyzer = F1SentimentAnalyzer()
 
     def get_recent_races(self, limit=5):
         """Fetch recent race results to analyze trends"""
@@ -195,12 +197,44 @@ class F1Predictor:
             } for p in predictions[1:3]  # Get 2nd and 3rd place
         ]
         
+        # Add sentiment analysis for top predictions
+        try:
+            sentiment = self.sentiment_analyzer.get_driver_sentiment(winner_prediction['driver'])
+            if sentiment:
+                winner_prediction['sentiment'] = sentiment
+                # Add recent headlines
+                winner_prediction['sentiment']['recent_headlines'] = (
+                    self.sentiment_analyzer.get_latest_headlines(winner_prediction['driver'], limit=3)
+                )
+            
+            # Also add sentiment for other predictions
+            for other_pred in winner_prediction.get('other_predictions', []):
+                other_sentiment = self.sentiment_analyzer.get_driver_sentiment(other_pred['driver'])
+                if other_sentiment:
+                    other_pred['sentiment'] = other_sentiment
+        except Exception as e:
+            logging.error(f"Error adding sentiment analysis: {str(e)}")
+
+        # Add sentiment analysis for the predicted winner
+        try:
+            if winner_prediction:
+                sentiment = self.sentiment_analyzer.get_driver_sentiment(winner_prediction['driver'])
+                if sentiment:
+                    winner_prediction['sentiment'] = sentiment
+                    # Add recent headlines
+                    winner_prediction['sentiment']['recent_headlines'] = (
+                        self.sentiment_analyzer.get_latest_headlines(winner_prediction['driver'], limit=3)
+                    )
+        except Exception as e:
+            logging.error(f"Error adding sentiment analysis: {str(e)}")
+
         return {
             'driver': winner_prediction['driver'],
             'confidence': winner_prediction['confidence'],
             'team': winner_prediction['team'],
             'reasons': reasons,
             'other_predictions': other_predictions,  # Add other predictions
+            'sentiment': winner_prediction.get('sentiment'),  # Add this line
             'prediction_metadata': {
                 'using_previous_season': recent_data['using_previous_season'],
                 'season_used': recent_data['season_used'],
@@ -240,7 +274,7 @@ class F1Predictor:
         # Add best overtaker to highlights
         if overtakes:
             best_overtaker = max(overtakes, key=lambda x: x['overtakes'])
-            highlights.append(f"{best_overtaker['driver']} gained the most positions: {best_overtaker['overtakes']} overtakes. They started from P{best_overtaker['original_position']} and finished in P{best_overtaker['final_position']}")
+            highlights.append(f"{best_overtaker['driver']} gained the most positions: {best_overtaker['overtakes']} overtakes. He started from P{best_overtaker['original_position']} and finished in P{best_overtaker['final_position']}")
         
         podium_teams = set(r['team'] for r in results if r['position'] is not None and r['position'] <= 3)
         if len(podium_teams) > 1:
@@ -346,16 +380,47 @@ class F1Predictor:
         # Get recent data for metadata
         recent_data = self.get_recent_races()
 
+        # Add sentiment analysis for pole prediction
+        try:
+            sentiment = self.sentiment_analyzer.get_driver_sentiment(pole_prediction['driver'])
+            if sentiment:
+                pole_prediction['sentiment'] = sentiment
+                # Add recent headlines
+                pole_prediction['sentiment']['recent_headlines'] = (
+                    self.sentiment_analyzer.get_latest_headlines(pole_prediction['driver'], limit=3)
+                )
+            
+            # Also add sentiment for other predictions
+            for other_pred in pole_prediction.get('other_predictions', []):
+                other_sentiment = self.sentiment_analyzer.get_driver_sentiment(other_pred['driver'])
+                if other_sentiment:
+                    other_pred['sentiment'] = other_sentiment
+        except Exception as e:
+            logging.error(f"Error adding sentiment analysis: {str(e)}")
+
+        # Add sentiment analysis for the predicted winner
+        try:
+            if pole_prediction:
+                sentiment = self.sentiment_analyzer.get_driver_sentiment(pole_prediction['driver'])
+                if sentiment:
+                    pole_prediction['sentiment'] = sentiment
+                    # Add recent headlines
+                    pole_prediction['sentiment']['recent_headlines'] = (
+                        self.sentiment_analyzer.get_latest_headlines(pole_prediction['driver'], limit=3)
+                    )
+        except Exception as e:
+            logging.error(f"Error adding sentiment analysis: {str(e)}")
+
         return {
             'driver': pole_prediction['driver'],
             'confidence': pole_prediction['confidence'],
             'team': pole_prediction['team'],
             'reasons': reasons,
             'other_predictions': other_predictions,  # Add other predictions
+            'sentiment': pole_prediction.get('sentiment'),  # Add this line
             'prediction_metadata': {
                 'using_previous_season': recent_data['using_previous_season'],
-                'season_used': recent_data['season_used'],
-                'confidence_adjustment': 0.7 if recent_data['using_previous_season'] else 1.0
+                'season_used': recent_data['season_used']
             }
         }
 

@@ -4,6 +4,7 @@ import axios from 'axios';
 import { getNextRace, getLastRace } from '../utils/raceCalendar';
 import ChampionshipStatus from './ChampionshipStatus';
 import LoadingBar from './LoadingBar';
+import SentimentCard from './SentimentCard';
 
 const F1Dashboard = () => {
   const [prediction, setPrediction] = useState(null);
@@ -142,7 +143,7 @@ const F1Dashboard = () => {
                     {/* Primary Prediction (Highest Confidence) */}
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="text-2xl font-bold text-gray-900">P1: {prediction.qualifying.driver}</h3>
+                        <h3 className="text-2xl font-bold text-gray-900">{prediction.qualifying.driver}</h3>
                         <p className="text-purple-600 font-medium">{prediction.qualifying.team}</p>
                       </div>
                       <div className="bg-purple-50 px-4 py-2 rounded-full">
@@ -156,7 +157,7 @@ const F1Dashboard = () => {
                     {prediction.qualifying.other_predictions?.slice(0, 2).map((pred, index) => (
                       <div key={index} className="flex items-center justify-between border-t pt-3">
                         <div>
-                          <h4 className="text-lg font-medium text-gray-800">P{index +2}: {pred.driver}</h4>
+                          <h4 className="text-lg font-medium text-gray-800">{pred.driver}</h4>
                           <p className="text-purple-500 text-sm">{pred.team}</p>
                         </div>
                         <div className="bg-purple-50/50 px-3 py-1 rounded-full">
@@ -201,7 +202,7 @@ const F1Dashboard = () => {
                     {/* Primary Prediction (Highest Confidence) */}
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="text-2xl font-bold text-gray-900">P1: {prediction.race.driver}</h3>
+                        <h3 className="text-2xl font-bold text-gray-900">{prediction.race.driver}</h3>
                         <p className="text-yellow-600 font-medium">{prediction.race.team}</p>
                       </div>
                       <div className="bg-yellow-50 px-4 py-2 rounded-full">
@@ -216,7 +217,7 @@ const F1Dashboard = () => {
                     {prediction.race.other_predictions?.slice(0, 2).map((pred, index) => (
                       <div key={index} className="flex items-center justify-between border-t pt-3">
                         <div>
-                          <h4 className="text-lg font-medium text-gray-800">P{index +2}: {pred.driver}</h4>
+                          <h4 className="text-lg font-medium text-gray-800">{pred.driver}</h4>
                           <p className="text-yellow-500 text-sm">{pred.team}</p>
                         </div>
                         <div className="bg-yellow-50/50 px-3 py-1 rounded-full">
@@ -321,6 +322,38 @@ const F1Dashboard = () => {
             </div>
           </div>
         )}
+
+        {/* Sentiment Analysis Section */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Media Sentiment Analysis</h2>
+          {prediction && (prediction.race?.sentiment || prediction.qualifying?.sentiment) ? (
+            <div className="grid lg:grid-cols-2 gap-8">
+              {prediction.race?.sentiment && (
+                <SentimentCard 
+                  sentiment={prediction.race.sentiment} 
+                  driver={prediction.race.driver}
+                />
+              )}
+              {prediction.qualifying?.sentiment && (
+                <SentimentCard 
+                  sentiment={prediction.qualifying.sentiment} 
+                  driver={prediction.qualifying.driver}
+                />
+              )}
+            </div>
+          ) : (
+            <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+              <div className="flex items-center justify-center text-gray-500">
+                <p>No sentiment analysis available at this time. This could be due to:</p>
+              </div>
+              <ul className="list-disc list-inside mt-4 text-gray-500 space-y-2">
+                <li>Limited recent media coverage</li>
+                <li>RSS feed connectivity issues</li>
+                <li>Processing delays in news aggregation</li>
+              </ul>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

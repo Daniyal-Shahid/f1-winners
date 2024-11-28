@@ -1,0 +1,6 @@
+flask==3.0.2
+flask-cors==4.0.0
+fastf1==3.3.5
+pandas==2.2.1
+numpy==1.26.4
+requests==2.31.0 

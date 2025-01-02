@@ -25,8 +25,15 @@ class ChampionshipCalculator:
         driver_data, constructor_data = self.get_current_standings()
         if not driver_data or not constructor_data:
             return {
-                'status': 'error',
-                'message': 'Unable to fetch championship data'
+                'status': 'no_data',
+                'message': 'No championship data available yet',
+                'championship_contenders': {
+                    'drivers': [],
+                    'constructors': []
+                },
+                'driver_standings': [],
+                'constructor_standings': [],
+                'remaining_races': None
             }
 
         try:

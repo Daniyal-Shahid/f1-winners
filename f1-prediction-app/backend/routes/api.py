@@ -1,10 +1,14 @@
 from flask import Blueprint, jsonify
 from services.f1_predictor import F1Predictor
 from services.sentiment_analyzer import F1SentimentAnalyzer
+from services.race_analyzer import RaceAnalyzer
+from services.race_calendar import RaceCalendarService  # Import the new service
 import logging
 
 api_bp = Blueprint('api', __name__)
 predictor = F1Predictor()
+race_analyzer = RaceAnalyzer()
+race_calendar_service = RaceCalendarService()  # Initialize the new service
 
 @api_bp.route('/prediction', methods=['GET'])
 def get_prediction():
@@ -50,4 +54,39 @@ def get_driver_sentiment_details(driver_name):
         return jsonify(sentiment_data)
     except Exception as e:
         logging.error(f"Error getting sentiment details: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@api_bp.route('/race-analysis/<driver>', methods=['GET'])
+def get_race_analysis(driver):
+    try:
+        logging.info(f"Fetching race analysis for driver: {driver}")
+        analysis = race_analyzer.get_driver_race_analysis(driver)
+        
+        if not analysis:
+            logging.error(f"No analysis data found for driver: {driver}")
+            return jsonify({
+                'error': 'No analysis data found',
+                'message': f'Could not find race data for driver: {driver}'
+            }), 404
+            
+        return jsonify(analysis)
+        
+    except Exception as e:
+        logging.error(f"Error in race analysis endpoint for {driver}: {str(e)}")
+        return jsonify({
+            'error': 'Internal server error',
+            'message': str(e)
+        }), 500
+
+@api_bp.route('/race-calendar', methods=['GET'])
+def get_race_calendar():
+    """Endpoint to fetch the current season's race calendar."""
+    try:
+        race_calendar = race_calendar_service.get_race_calendar()
+        if race_calendar:
+            return jsonify(race_calendar)
+        else:
+            return jsonify({'error': 'Unable to fetch race calendar'}), 500
+    except Exception as e:
+        logging.error(f"Error in race calendar endpoint: {str(e)}")
         return jsonify({'error': str(e)}), 500

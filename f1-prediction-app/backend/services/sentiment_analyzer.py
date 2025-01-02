@@ -25,7 +25,6 @@ class F1SentimentAnalyzer:
             'racefans': 'https://www.racefans.net/feed/',
             'crash': 'https://www.crash.net/rss/f1',
             'gpblog': 'https://www.gpblog.com/en/rss',
-            # 'planetf1': 'https://www.planetf1.com/feed/',
             'racingnews365': 'https://racingnews365.com/feed/news.xml',
             'f1i': 'https://f1i.com/feed',
             'thecheckeredflag': 'https://www.thecheckeredflag.co.uk/feed/',

@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { ArrowLeft, TrendingUp, TrendingDown, MessageCircle, BarChart3 } from 'lucide-react';
 import axios from 'axios';
+import SentimentVisuals from '../components/SentimentVisuals';
 
 const SentimentDetails = () => {
   const { driver } = useParams();
+  const navigate = useNavigate();
   const [sentimentData, setSentimentData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -24,15 +27,63 @@ const SentimentDetails = () => {
     fetchData();
   }, [driver]);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!sentimentData) return <div>No data available</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-pulse text-f1-gray">Loading analysis...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-status-danger">Error: {error}</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">{driver} Media Coverage Analysis</h1>
-      
-      <div className="grid md:grid-cols-3 gap-8">
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-f1-dark to-f1-carbon text-white py-8 mb-8">
+        <div className="container mx-auto px-4">
+          <button 
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 text-f1-gray hover:text-white transition-colors mb-4"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Dashboard
+          </button>
+          <h1 className="text-3xl font-display">{driver} Media Coverage Analysis</h1>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 pb-12">
+        <div className="mb-12">
+          <SentimentVisuals sentiment={sentimentData} />
+        </div>
+
+        {/* Summary Statistics */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="bg-surface-card p-6 rounded-xl shadow-card">
+            <div className="text-sm text-f1-gray mb-2">Articles Analyzed</div>
+            <div className="text-3xl font-bold text-f1-dark">{sentimentData.articles_analyzed}</div>
+          </div>
+          <div className="bg-surface-card p-6 rounded-xl shadow-card">
+            <div className="text-sm text-f1-gray mb-2">Average Sentiment</div>
+            <div className="text-3xl font-bold text-f1-dark">{sentimentData.average_sentiment.toFixed(2)}</div>
+          </div>
+          <div className="bg-surface-card p-6 rounded-xl shadow-card">
+            <div className="text-sm text-f1-gray mb-2">Time Period</div>
+            <div className="text-3xl font-bold text-f1-dark">{sentimentData.time_period}</div>
+          </div>
+          <div className="bg-surface-card p-6 rounded-xl shadow-card">
+            <div className="text-sm text-f1-gray mb-2">Total Sources</div>
+            <div className="text-3xl font-bold text-f1-dark">{sentimentData.total_sources}</div>
+          </div>
+        </div>
+
         {/* Positive Articles */}
         <div className="bg-green-50 p-6 rounded-lg">
           <h2 className="text-xl font-semibold text-green-700 mb-4">
@@ -81,25 +132,6 @@ const SentimentDetails = () => {
                 </p>
               </div>
             ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Add summary statistics */}
-      <div className="mt-8 bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-semibold mb-4">Analysis Summary</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div>
-            <p className="text-gray-600">Articles Analyzed</p>
-            <p className="text-2xl font-bold">{sentimentData.articles_analyzed}</p>
-          </div>
-          <div>
-            <p className="text-gray-600">Average Sentiment</p>
-            <p className="text-2xl font-bold">{sentimentData.average_sentiment.toFixed(2)}</p>
-          </div>
-          <div>
-            <p className="text-gray-600">Time Period</p>
-            <p className="text-2xl font-bold">{sentimentData.time_period}</p>
           </div>
         </div>
       </div>

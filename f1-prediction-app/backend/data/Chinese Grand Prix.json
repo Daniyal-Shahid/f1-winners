@@ -1,0 +1,30 @@
+{
+    "race_name": "Chinese Grand Prix",
+    "race_date": "2025-03-23",
+    "predicted_winner": {
+        "name": "Lando Norris",
+        "team": "McLaren",
+        "abbreviation": "NOR",
+        "position": 1
+    },
+    "top_3": [
+        {
+            "name": "Lando Norris",
+            "team": "McLaren",
+            "abbreviation": "NOR",
+            "position": 1
+        },
+        {
+            "name": "Oscar Piastri",
+            "team": "McLaren",
+            "abbreviation": "PIA",
+            "position": 2
+        },
+        {
+            "name": "Max Verstappen",
+            "team": "Red Bull Racing",
+            "abbreviation": "VER",
+            "position": 2
+        }
+    ]
+}

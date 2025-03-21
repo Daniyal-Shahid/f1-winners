@@ -1,30 +1,177 @@
 {
     "race_name": "Chinese Grand Prix",
     "race_date": "2025-03-23",
+    "weather": "Dry and moderate",
     "predicted_winner": {
+        "position": 1.0,
         "name": "Lando Norris",
         "team": "McLaren",
         "abbreviation": "NOR",
-        "position": 1
+        "confidence": 99.9
     },
     "top_3": [
         {
+            "position": 1.0,
             "name": "Lando Norris",
             "team": "McLaren",
             "abbreviation": "NOR",
-            "position": 1
+            "confidence": 99.9
         },
         {
-            "name": "Oscar Piastri",
-            "team": "McLaren",
-            "abbreviation": "PIA",
-            "position": 2
-        },
-        {
+            "position": 1.0,
             "name": "Max Verstappen",
             "team": "Red Bull Racing",
             "abbreviation": "VER",
-            "position": 2
+            "confidence": 99.9
+        },
+        {
+            "position": 2.0,
+            "name": "Oscar Piastri",
+            "team": "McLaren",
+            "abbreviation": "PIA",
+            "confidence": 0.06
+        }
+    ],
+    "all_drivers": [
+        {
+            "position": 1.0,
+            "name": "Lando Norris",
+            "team": "McLaren",
+            "abbreviation": "NOR",
+            "confidence": 99.9
+        },
+        {
+            "position": 1.0,
+            "name": "Max Verstappen",
+            "team": "Red Bull Racing",
+            "abbreviation": "VER",
+            "confidence": 99.9
+        },
+        {
+            "position": 2.0,
+            "name": "Oscar Piastri",
+            "team": "McLaren",
+            "abbreviation": "PIA",
+            "confidence": 0.06
+        },
+        {
+            "position": 5.0,
+            "name": "George Russell",
+            "team": "Mercedes",
+            "abbreviation": "RUS",
+            "confidence": 0.01
+        },
+        {
+            "position": 5.0,
+            "name": "Charles Leclerc",
+            "team": "Ferrari",
+            "abbreviation": "LEC",
+            "confidence": 0.01
+        },
+        {
+            "position": 5.0,
+            "name": "Lewis Hamilton",
+            "team": "Ferrari",
+            "abbreviation": "HAM",
+            "confidence": 0.01
+        },
+        {
+            "position": 6.0,
+            "name": "Andrea Kimi Antonelli",
+            "team": "Mercedes",
+            "abbreviation": "ANT",
+            "confidence": 0.0
+        },
+        {
+            "position": 7.0,
+            "name": "Pierre Gasly",
+            "team": "Alpine",
+            "abbreviation": "GAS",
+            "confidence": 0.0
+        },
+        {
+            "position": 8.0,
+            "name": "Yuki Tsunoda",
+            "team": "Racing Bulls",
+            "abbreviation": "TSU",
+            "confidence": 0.0
+        },
+        {
+            "position": 9.0,
+            "name": "Oliver Bearman",
+            "team": "Haas F1 Team",
+            "abbreviation": "BEA",
+            "confidence": 0.0
+        },
+        {
+            "position": 11.0,
+            "name": "Fernando Alonso",
+            "team": "Aston Martin",
+            "abbreviation": "ALO",
+            "confidence": 0.0
+        },
+        {
+            "position": 11.0,
+            "name": "Lance Stroll",
+            "team": "Aston Martin",
+            "abbreviation": "STR",
+            "confidence": 0.0
+        },
+        {
+            "position": 12.0,
+            "name": "Carlos Sainz",
+            "team": "Williams",
+            "abbreviation": "SAI",
+            "confidence": 0.0
+        },
+        {
+            "position": 14.0,
+            "name": "Alexander Albon",
+            "team": "Williams",
+            "abbreviation": "ALB",
+            "confidence": 0.0
+        },
+        {
+            "position": 14.0,
+            "name": "Esteban Ocon",
+            "team": "Haas F1 Team",
+            "abbreviation": "OCO",
+            "confidence": 0.0
+        },
+        {
+            "position": 15.0,
+            "name": "Jack Doohan",
+            "team": "Alpine",
+            "abbreviation": "DOO",
+            "confidence": 0.0
+        },
+        {
+            "position": 16.0,
+            "name": "Isack Hadjar",
+            "team": "Racing Bulls",
+            "abbreviation": "HAD",
+            "confidence": 0.0
+        },
+        {
+            "position": 16.0,
+            "name": "Gabriel Bortoleto",
+            "team": "Kick Sauber",
+            "abbreviation": "BOR",
+            "confidence": 0.0
+        },
+        {
+            "position": 16.0,
+            "name": "Nico Hulkenberg",
+            "team": "Kick Sauber",
+            "abbreviation": "HUL",
+            "confidence": 0.0
+        },
+        {
+            "position": 16.0,
+            "name": "Liam Lawson",
+            "team": "Red Bull Racing",
+            "abbreviation": "LAW",
+            "confidence": 0.0
         }
     ]
 }
